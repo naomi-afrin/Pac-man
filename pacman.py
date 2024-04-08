@@ -10,11 +10,13 @@ ghostInfo = [ {"ghostX": 230, "ghostY": 220, "color": "pink", "dir": "left"},
              {"ghostX": 270, "ghostY": 220, "color": "blue", "dir": "right"},
              {"ghostX": 230, "ghostY": 280, "color": "orange", "dir": "left"},
              {"ghostX": 270, "ghostY": 280, "color": "red", "dir": "right"}]
-changeDirPoints = {(155, 220): ["right", "down"], (155, 280): ["right", "up"], (345, 280): ["left", "up"], (345, 220): ["left", "down"],
+changeDirPoints = {(25, 385): ["right", "down"], (115, 385): ["right", "left", "down"], (230, 385): ["left", "down"], (270, 385): ["right", "down"], (385, 385): ["right", "left", "down"], (475, 385): ["left", "down"],
                    (25, 325): ["right", "up", "down"], (115, 325): ["right", "left", "up", "down"], (155, 325): ["right", "left"], (230, 325): ["right", "left", "up"], (270, 325): ["right", "left", "up"], (345, 325): ["right", "left", "down"], (385, 325): ["right", "left", "up", "down"], (475, 325): ["left", "up", "down"],
+                   (25, 285): ["right", "up", "down"], (115, 285): ["left", "up", "down"], (385, 285): ["right", "up", "down"], (475, 285): ["left", "up", "down"],
+                   (25, 215): ["right", "up", "down"], (115, 215): ["left", "up", "down"], (385, 215): ["right", "up", "down"], (475, 215): ["left", "up", "down"],
+                   (155, 220): ["right", "down"], (155, 280): ["right", "up"], (250, 280): ["right", "left", "down"], (250, 220): ["right", "left", "up"], (345, 280): ["left", "up"], (345, 220): ["left", "down"],
                    (25, 175): ["right", "up", "down"], (115, 175): ["right", "left", "up", "down"], (155, 175): ["right", "left"], (230, 175): ["left", "down"], (270, 175): ["right", "down"], (345, 175): ["right", "left", "up"], (385, 175): ["right", "left", "up", "down"], (475, 175): ["left", "up", "down"],
-                   (25, 385): ["right", "down"], (115, 385): ["right", "left", "down"], (230, 385): ["left", "down"], (270, 385): ["right", "down"], (385, 385): ["right", "left", "down"], (475, 385): ["left", "down"],
-                   (25, 115): ["right", "up"], (115, 115): ["right", "left", "up"], (230, 115): ["right", "left", "up"], (270, 115): ["right","left", "up"], (385, 115): ["right", "left", "up"], (475, 115): ["left", "up"]
+                   (25, 115): ["right", "up"], (115, 115): ["right", "left", "up"], (230, 115): ["right", "left", "up"], (270, 115): ["right","left", "up"], (385, 115): ["right", "left", "up"], (475, 115): ["left", "up"]       
                    }
 
 def to_zone0(x1,y1,x2,y2,z):
