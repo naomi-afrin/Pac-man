@@ -6,8 +6,10 @@ import time
 
 ## ghost info
 color = {"pink": [0.996, 0.498, 1], "blue":[0.376, 1, 0.98], "orange":[1, 0.686, 0.278], "red":[0.988, 0.024, 0.024]}
-ghostInfo = [[230, 220, "pink", "left"], [270, 220, "blue", "right"], [230, 280, "orange", "left"], [270, 280, "red", "right"]]
-
+ghostInfo = [ {"ghostX": 230, "ghostY": 220, "color": "pink", "dir": "left"}, 
+             {"ghostX": 270, "ghostY": 220, "color": "blue", "dir": "right"},
+             {"ghostX": 230, "ghostY": 280, "color": "orange", "dir": "left"},
+             {"ghostX": 270, "ghostY": 280, "color": "red", "dir": "right"}]
 def to_zone0(x1,y1,x2,y2,z):
     if z==1:
         m1=y1
@@ -270,10 +272,14 @@ def draw_pacman(l):
 
 def draw_ghost():
     for ghost in ghostInfo:
-        x, y, cl, dir = ghost   
-        cl1, cl2, cl3 = color[cl]
+        cl1, cl2, cl3 = color[ghost["color"]]
         glColor3f(cl1, cl2, cl3)
-        draw_circle(x, y, 10)
+        draw_circle(ghost["ghostX"], ghost["ghostY"], 10)
+
+
+# def update_ghost():
+#     for ghost in ghostInfo:
+        
 
 def animate():
     pass
