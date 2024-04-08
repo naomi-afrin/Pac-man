@@ -4,6 +4,18 @@ from OpenGL.GLU import *
 import random
 import time
 
+## ghost info
+color = {"pink": [0.996, 0.498, 1], "blue":[0.376, 1, 0.98], "orange":[1, 0.686, 0.278], "red":[0.988, 0.024, 0.024]}
+ghostInfo = [ {"ghostX": 230, "ghostY": 220, "color": "pink", "dir": "left"}, 
+             {"ghostX": 270, "ghostY": 220, "color": "blue", "dir": "right"},
+             {"ghostX": 230, "ghostY": 280, "color": "orange", "dir": "left"},
+             {"ghostX": 270, "ghostY": 280, "color": "red", "dir": "right"}]
+changeDirPoints = {(155, 220): ["right", "down"], (155, 280): ["right", "up"], (345, 280): ["left", "up"], (345, 220): ["left", "down"],
+                   (25, 325): ["right", "up", "down"], (115, 325): ["right", "left", "up", "down"], (155, 325): ["right", "left"], (230, 325): ["right", "left", "up"], (270, 325): ["right", "left", "up"], (345, 325): ["right", "left", "down"], (385, 325): ["right", "left", "up", "down"], (475, 325): ["left", "up", "down"],
+                   (25, 175): ["right", "up", "down"], (115, 175): ["right", "left", "up", "down"], (155, 175): ["right", "left"], (230, 175): ["right", "left", "down"], (270, 175): ["right", "down"], (345, 175): ["right", "left", "up"], (385, 175): ["right", "left", "up", "down"], (475, 175): ["left", "up", "down"],
+                   (25, 385): ["right", "down"], (115, 385): ["right", "left", "down"], (230, 385): ["left", "down"], (270, 385): ["right", "down"], (385, 385): ["right", "left", "down"], (475, 385): ["left", "down"]
+                   }
+
 def to_zone0(x1,y1,x2,y2,z):
     if z==1:
         m1=y1
@@ -263,10 +275,38 @@ def draw_pacman(l):
     glColor3f(1,1,0)
     draw_circle(x,y,10)
 
-    
+
+def draw_ghost():
+    for ghost in ghostInfo:
+        cl1, cl2, cl3 = color[ghost["color"]]
+        glColor3f(cl1, cl2, cl3)
+        draw_circle(ghost["ghostX"], ghost["ghostY"], 10)
+
+
+def change_dir():
+    for ghost in ghostInfo:
+        for points in changeDirPoints:
+            x, y = points
+            if ghost["ghostX"] == x and ghost["ghostY"] == y:
+                idx = random.randint(0, len(changeDirPoints[points])-1)
+                ghost["dir"] = changeDirPoints[points][idx]
+
+
+def update_ghost():
+    change_dir()
+    for ghost in ghostInfo:
+        if ghost["dir"] == "right":
+            ghost["ghostX"] += 1
+        if ghost["dir"] == "left":
+            ghost["ghostX"] -= 1
+        if ghost["dir"] == "up":
+            ghost["ghostY"] += 1
+        if ghost["dir"] == "down":
+            ghost["ghostY"] -= 1
 
 def animate():
-    pass
+    update_ghost()
+    glutPostRedisplay()
 
 def specialKeyListener():
     pass
@@ -283,6 +323,7 @@ def mouseListener(button, state, x, y):
     global walls, game, pause
 
     if button== GLUT_LEFT_BUTTON:
+        print(x, y)
         if (state == GLUT_DOWN):
             x1,y1=coordinate_converter(x,y)
             
@@ -336,6 +377,7 @@ def showScreen():
 
     drawMaze()
     draw_pacman(pac_pos)
+    draw_ghost()
     
     glutSwapBuffers()
 
