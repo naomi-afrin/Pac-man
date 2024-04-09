@@ -304,7 +304,7 @@ pointDots = {(25, 115): True, (115, 115): True, (475, 115): True, (385, 115): Tr
 
 
 pause=False
-pac_pos=[250,325]
+pac_position = [250,325]
 pac_direction = 'right'
 pac_direction_command = 'right'
 pac_speed = 1
@@ -361,9 +361,9 @@ def draw_pacman(l):
     draw_circle(x,y,10)
 
 def check_valid_moves():
-    global pac_pos, pac_direction, pac_speed, pac_valid_moves
+    global pac_position, pac_direction, pac_speed, pac_valid_moves
     pac_valid_moves = {'right' : False, 'left' : False, 'up' : False, 'down' : False}
-    x, y = pac_pos
+    x, y = pac_position
     for i in range(1, 20+1):
         if (x+i, y) in pointDots and not pac_valid_moves["right"]:
             pac_valid_moves["right"] = True
@@ -381,19 +381,19 @@ def set_direction():
             pac_direction = i
 
 def move_pacman():
-    global pac_pos, pac_direction, pac_speed, pac_valid_moves
+    global pac_position, pac_direction, pac_speed, pac_valid_moves
     if pac_direction == 'right' and pac_valid_moves['right']:
-        pac_pos[0] += pac_speed
+        pac_position[0] += pac_speed
     elif pac_direction == 'left' and pac_valid_moves['left']:
-        pac_pos[0] -= pac_speed
+        pac_position[0] -= pac_speed
     elif pac_direction == 'up'  and pac_valid_moves['up']:
-        pac_pos[1] += pac_speed
+        pac_position[1] += pac_speed
     elif pac_direction == 'down' and pac_valid_moves['down']:
-        pac_pos[1] -= pac_speed
+        pac_position[1] -= pac_speed
 
 def collision_with_point_dots():
-    global pac_pos, pointDots, score
-    x, y = pac_pos
+    global pac_position, pointDots, score
+    x, y = pac_position
     if (x, y) in pointDots:
         if pointDots[x, y]:
             pointDots[x, y] = False
@@ -501,7 +501,7 @@ def showScreen():
     glLoadIdentity()
     iterate()
     
-    global pause, walls, game, pac_pos
+    global pause, walls, game, pac_position
     
     glPointSize(3)
     glColor3f(1, 1, 1)
@@ -534,7 +534,7 @@ def showScreen():
     drawMaze()
     draw_point_dots()
     draw_score()
-    draw_pacman(pac_pos)
+    draw_pacman(pac_position)
     draw_ghost()
     
     glutSwapBuffers()
