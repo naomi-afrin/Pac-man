@@ -1,1 +1,1 @@
-    draw_line(cx, cy, cx - 5, cy + 5)
+ # addX = 0

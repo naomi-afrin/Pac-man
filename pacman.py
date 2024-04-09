@@ -5,7 +5,7 @@ import random
 import time
 
 ## ghost info
-color = {"pink": [0.996, 0.498, 1], "blue":[0.376, 1, 0.98], "orange":[1, 0.686, 0.278], "red":[0.988, 0.024, 0.024]}
+color = {"pink": [0.996, 0.498, 1], "blue":[0.278, 0.729, 0.988], "orange":[1, 0.686, 0.278], "red":[0.988, 0.024, 0.024]}
 
 changeDirPoints = {(25, 385): ["right", "down"], (115, 385): ["right", "left", "down"], (230, 385): ["left", "down"], (270, 385): ["right", "down"], (385, 385): ["right", "left", "down"], (475, 385): ["left", "down"],
                    (25, 325): ["right", "up", "down"], (115, 325): ["right", "left", "up", "down"], (155, 325): ["right", "left"], (230, 325): ["right", "left", "up"], (270, 325): ["right", "left", "up"], (345, 325): ["right", "left", "down"], (385, 325): ["right", "left", "up", "down"], (475, 325): ["left", "up", "down"],
@@ -18,12 +18,13 @@ changeDirPoints = {(25, 385): ["right", "down"], (115, 385): ["right", "left", "
 
 
 def ghost_initial():
-    global ghostInfo, ghostEyeUp, setGhostEye
+    global ghostInfo, ghostEyeUp, setGhostMouth, GhostMouthRad
     ghostInfo = [ {"ghostX": 230, "ghostY": 220, "color": "pink", "dir": "left"}, 
              {"ghostX": 270, "ghostY": 220, "color": "blue", "dir": "right"},
              {"ghostX": 230, "ghostY": 280, "color": "orange", "dir": "left"},
              {"ghostX": 270, "ghostY": 280, "color": "red", "dir": "right"}]
-    setGhostEye = time.time()
+    setGhostMouth = time.time()
+    GhostMouthRad = 2
     
 
 def pacman_initial():
@@ -418,6 +419,22 @@ def draw_ghost_eyes(ghostX, ghostY, ghostRad, dir):
         draw_circle(right_eyeX + addX, right_eyeY + addY, rad)
 
 
+def draw_ghost_mouth(ghostX, ghostY):
+    global GhostMouthRad, setGhostMouth
+    mouthX = ghostX
+    mouthY = ghostY - 3
+    curTime = time.time()
+    if curTime - setGhostMouth >= 0.3:
+        setGhostMouth = curTime
+        if GhostMouthRad == 2:
+            GhostMouthRad = 1
+        elif GhostMouthRad == 1:
+            GhostMouthRad = 0
+        elif GhostMouthRad == 0:
+            GhostMouthRad = 2
+    glColor3f(1, 1, 1)
+    for r in range(GhostMouthRad, -1, -1):
+        draw_circle(mouthX, mouthY, r)
 
 def draw_ghost():
     for ghost in ghostInfo:
@@ -429,11 +446,21 @@ def draw_ghost():
         
         lineX = ghost["ghostX"] - ghostRad
         lineY = ghost["ghostY"]
+        
+        if ghost["dir"] == "right":
+            addX = -4
+        elif ghost["dir"] == "left":
+            addX = 4
+        else:
+            addX = 0
+        
+        addX = 0
         for lines in range(2*ghostRad+1):
-            draw_line(lineX, lineY, lineX, lineY-10)
+            draw_line(lineX, lineY, lineX + addX, lineY-10)
             lineX += 1
-
+        
         draw_ghost_eyes(ghost["ghostX"], ghost["ghostY"], ghostRad, ghost["dir"])
+        draw_ghost_mouth(ghost["ghostX"], ghost["ghostY"])
 
 
 
