@@ -329,6 +329,32 @@ def draw_point_dots():
             glVertex2f(*point)
     glEnd()
 
+def draw_score():
+    global score
+    for i, digit in enumerate(str(score)):
+        start = 20 + 40 * i, 30
+        pointA = start
+        pointB = pointA[0] + 30, pointA[1]
+        pointC = pointA[0], pointA[1] + 20
+        pointD = pointB[0], pointB[1] + 20
+        pointE = pointC[0], pointC[1] + 20
+        pointF = pointD[0], pointD[1] + 20
+        
+        if digit in "0,2,3,5,6,7,8,9":
+            draw_line(*pointE, *pointF)
+        if digit in "2,3,4,5,6,8,9":
+            draw_line(*pointC, *pointD)
+        if digit in "0,2,3,5,6,8,9":
+            draw_line(*pointA, *pointB)
+        if digit in "0,2,6,8":
+            draw_line(*pointA, *pointC)
+        if digit in "0,4,5,6,7,8,9":
+            draw_line(*pointC, *pointE)
+        if digit in "0,1,3,4,5,6,7,8,9":
+            draw_line(*pointB, *pointD)
+        if digit in "0,1,2,3,4,7,8,9":
+            draw_line(*pointD, *pointF)
+
 def draw_pacman(l):
     x,y=l
     glColor3f(1,1,0)
@@ -371,7 +397,7 @@ def collision_with_point_dots():
     if (x, y) in pointDots:
         if pointDots[x, y]:
             pointDots[x, y] = False
-            score += 10
+            score += 5
 
 
 def draw_ghost():
@@ -507,6 +533,7 @@ def showScreen():
 
     drawMaze()
     draw_point_dots()
+    draw_score()
     draw_pacman(pac_pos)
     draw_ghost()
     
