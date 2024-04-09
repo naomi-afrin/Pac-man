@@ -262,6 +262,43 @@ walls=[[0,410,500,410],[500,410,500,90],[0,410,0,90],[0,90,500,90],
        [130,310,130,190],[140,310,140,255],[130,310,140,310],[130,190,140,190],
        [140,255,215,255],[215,255,215,245],[140,245,215,245],[140,245,140,190]]
 
+pointDots = {(25, 115): True, (115, 115): True, (475, 115): True, (385, 115): True, (25, 130): True, (115, 130): True, 
+          (475, 130): True, (385, 130): True, (25, 145): True, (115, 145): True, (475, 145): True, (385, 145): True, 
+          (25, 160): True, (115, 160): True, (475, 160): True, (385, 160): True, (25, 175): True, (115, 175): True, 
+          (475, 175): True, (385, 175): True, (25, 190): True, (115, 190): True, (475, 190): True, (385, 190): True, 
+          (25, 205): True, (115, 205): True, (475, 205): True, (385, 205): True, (25, 220): True, (115, 220): True, 
+          (475, 220): True, (385, 220): True, (25, 235): True, (115, 235): True, (475, 235): True, (385, 235): True, 
+          (25, 250): True, (115, 250): True, (475, 250): True, (385, 250): True, (25, 265): True, (115, 265): True, 
+          (475, 265): True, (385, 265): True, (25, 280): True, (115, 280): True, (475, 280): True, (385, 280): True, 
+          (25, 295): True, (115, 295): True, (475, 295): True, (385, 295): True, (25, 310): True, (115, 310): True, 
+          (475, 310): True, (385, 310): True, (25, 325): True, (115, 325): True, (475, 325): True, (385, 325): True, 
+          (25, 340): True, (115, 340): True, (475, 340): True, (385, 340): True, (25, 355): True, (115, 355): True, 
+          (475, 355): True, (385, 355): True, (25, 370): True, (115, 370): True, (475, 370): True, (385, 370): True, 
+          (25, 385): True, (115, 385): True, (475, 385): True, (385, 385): True, (230, 115): True, (270, 115): True, 
+          (230, 130): True, (270, 130): True, (230, 145): True, (270, 145): True, (230, 160): True, (270, 160): True, 
+          (230, 175): True, (270, 175): True, (242, 115): True, (258, 115): True, (230, 325): True, (270, 325): True, 
+          (230, 340): True, (270, 340): True, (230, 355): True, (270, 355): True, (230, 370): True, (270, 370): True, 
+          (230, 385): True, (270, 385): True, (40, 115): True, (40, 385): True, (460, 385): True, (460, 115): True, 
+          (55, 115): True, (55, 385): True, (445, 385): True, (445, 115): True, (70, 115): True, (70, 385): True, 
+          (430, 385): True, (430, 115): True, (85, 115): True, (85, 385): True, (415, 385): True, (415, 115): True, 
+          (100, 115): True, (100, 385): True, (400, 385): True, (400, 115): True, (130, 115): True, (130, 385): True, 
+          (370, 385): True, (370, 115): True, (145, 115): True, (145, 385): True, (355, 385): True, (355, 115): True, 
+          (160, 115): True, (160, 385): True, (340, 385): True, (340, 115): True, (175, 115): True, (175, 385): True, 
+          (325, 385): True, (325, 115): True, (190, 115): True, (190, 385): True, (310, 385): True, (310, 115): True, 
+          (205, 115): True, (205, 385): True, (295, 385): True, (295, 115): True, (220, 115): True, (220, 385): True, 
+          (280, 385): True, (280, 115): True, (40, 175): True, (40, 325): True, (460, 175): True, (460, 325): True, 
+          (55, 175): True, (55, 325): True, (445, 175): True, (445, 325): True, (70, 175): True, (70, 325): True, 
+          (430, 175): True, (430, 325): True, (85, 175): True, (85, 325): True, (415, 175): True, (415, 325): True, 
+          (100, 175): True, (100, 325): True, (400, 175): True, (400, 325): True, (130, 175): True, (130, 325): True, 
+          (370, 175): True, (370, 325): True, (145, 175): True, (145, 325): True, (355, 175): True, (355, 325): True, 
+          (160, 175): True, (160, 325): True, (340, 175): True, (340, 325): True, (175, 175): True, (175, 325): True, 
+          (325, 175): True, (325, 325): True, (190, 175): True, (190, 325): True, (310, 175): True, (310, 325): True, 
+          (205, 175): True, (205, 325): True, (295, 175): True, (295, 325): True, (220, 175): True, (220, 325): True, 
+          (280, 175): True, (280, 325): True, (40, 212): True, (40, 288): True, (460, 212): True, (460, 288): True, 
+          (55, 212): True, (55, 288): True, (445, 212): True, (445, 288): True, (70, 212): True, (70, 288): True, 
+          (430, 212): True, (430, 288): True, (85, 212): True, (85, 288): True, (415, 212): True, (415, 288): True, 
+          (100, 212): True, (100, 288): True, (400, 212): True, (400, 288): True}
+
 pause=False
 pac_pos=[250,325]
 game=True
@@ -306,6 +343,17 @@ def update_ghost():
             ghost["ghostY"] += 1
         if ghost["dir"] == "down":
             ghost["ghostY"] -= 1
+
+def draw_point_dots():
+    global pointDots
+    glPointSize(3)
+    glColor3f(1,1,1)
+    glBegin(GL_POINTS)
+    for point in pointDots:
+        if pointDots[point]:
+            glVertex2f(*point)
+    glEnd()
+
 
 def animate():
     update_ghost()
@@ -356,6 +404,12 @@ def showScreen():
     
     global pause, walls, game, pac_pos
     
+    glPointSize(3)
+    glColor3f(1, 1, 1)
+    glBegin(GL_POINTS)
+    
+    glEnd()
+
     #cross
     glColor3f(1.0, .0, 0.0) 
     draw_line(460,495,490,465)
@@ -379,6 +433,7 @@ def showScreen():
     draw_line(20,480,55,480)
 
     drawMaze()
+    draw_point_dots()
     draw_pacman(pac_pos)
     draw_ghost()
     
