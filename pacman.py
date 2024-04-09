@@ -367,11 +367,44 @@ def collision_with_point_dots():
             score += 10
 
 
+def draw_ghost_eyes(ghostX, ghostY, ghostRad):
+    glColor3f(1, 1, 1)
+    outerEyeRad = 3
+    left_eyeX = ghostX - (ghostRad//2)
+    left_eyeY = ghostY + (ghostRad//2)
+    right_eyeX = ghostX + (ghostRad//2)
+    right_eyeY = ghostY + (ghostRad//2)
+    for rad in range(outerEyeRad, -1, -1):
+        draw_circle(left_eyeX, left_eyeY, rad)
+        draw_circle(right_eyeX, right_eyeY, rad)
+
+    glColor3f(0.055, 0.376, 0.922)
+    innerEyeRad = 1
+    left_eyeX = ghostX - (ghostRad//2)
+    left_eyeY = ghostY + (ghostRad//2)
+    right_eyeX = ghostX + (ghostRad//2)
+    right_eyeY = ghostY + (ghostRad//2)
+    for rad in range(innerEyeRad, -1, -1):
+        draw_circle(left_eyeX, left_eyeY, rad)
+        draw_circle(right_eyeX, right_eyeY, rad)
+
+
 def draw_ghost():
     for ghost in ghostInfo:
         cl1, cl2, cl3 = color[ghost["color"]]
         glColor3f(cl1, cl2, cl3)
-        draw_circle(ghost["ghostX"], ghost["ghostY"], 10)
+        ghostRad = 10
+        for rad in range(ghostRad, -1, -1):
+            draw_circle(ghost["ghostX"], ghost["ghostY"], rad)
+        
+        lineX = ghost["ghostX"] - ghostRad
+        lineY = ghost["ghostY"]
+        for lines in range(2*ghostRad+1):
+            draw_line(lineX, lineY, lineX, lineY-10)
+            lineX += 1
+
+        draw_ghost_eyes(ghost["ghostX"], ghost["ghostY"], ghostRad)
+
 
 
 def change_dir():
