@@ -301,14 +301,19 @@ pointDots = {(25, 115): True, (115, 115): True, (475, 115): True, (385, 115): Tr
              (302, 280): True, (302, 220): True, (317, 280): True, (317, 220): True, (332, 280): True, (332, 220): True, (242, 235): True, 
              (242, 250): True, (242, 265): True, (257, 235): True, (257, 250): True, (257, 265): True, (235, 325): False, (250, 325): False, 
              (265, 325): False, (155, 325): False, (345, 325): False, (155, 175): False, (345, 175): False}
-
+totalPointDots = len(dict(filter(lambda x: (x[1] == True), pointDots.items())))
+powerUpPoints = [(25, 115), (25, 385), (475, 115), (475, 385)]
+blink_counter = 0
 
 pause=False
-pac_position = [250,325]
+pac_pos = [250,325]
 pac_direction = 'right'
 pac_direction_command = 'right'
 pac_speed = 1
 pac_valid_moves = {'right' : False, 'left' : False, 'up' : False, 'down' : False}
+power_up = False
+power_up_time = 0
+game_win = False
 score = 0
 game=True
 
@@ -320,15 +325,18 @@ def drawMaze():
         draw_line(i[0],i[1],i[2],i[3])
 
 def draw_point_dots():
-    global pointDots
-    glPointSize(3)
+    global pointDots, powerUpPoints, blink_counter
     glColor3f(1,1,1)
-    glBegin(GL_POINTS)
     for point in pointDots:
         if pointDots[point]:
+            if point in powerUpPoints and blink_counter < 5:
+                glPointSize(7)
+            else:
+                glPointSize(3)
+            glBegin(GL_POINTS)
             glVertex2f(*point)
-    glEnd()
-
+            glEnd()
+    
 def draw_score():
     global score
     for i, digit in enumerate(str(score)):
@@ -361,9 +369,9 @@ def draw_pacman(l):
     draw_circle(x,y,10)
 
 def check_valid_moves():
-    global pac_position, pac_direction, pac_speed, pac_valid_moves
+    global pac_pos, pac_direction, pac_speed, pac_valid_moves
     pac_valid_moves = {'right' : False, 'left' : False, 'up' : False, 'down' : False}
-    x, y = pac_position
+    x, y = pac_pos
     for i in range(1, 20+1):
         if (x+i, y) in pointDots and not pac_valid_moves["right"]:
             pac_valid_moves["right"] = True
@@ -381,23 +389,46 @@ def set_direction():
             pac_direction = i
 
 def move_pacman():
-    global pac_position, pac_direction, pac_speed, pac_valid_moves
+    global pac_pos, pac_direction, pac_speed, pac_valid_moves
     if pac_direction == 'right' and pac_valid_moves['right']:
-        pac_position[0] += pac_speed
+        pac_pos[0] += pac_speed
     elif pac_direction == 'left' and pac_valid_moves['left']:
-        pac_position[0] -= pac_speed
+        pac_pos[0] -= pac_speed
     elif pac_direction == 'up'  and pac_valid_moves['up']:
-        pac_position[1] += pac_speed
+        pac_pos[1] += pac_speed
     elif pac_direction == 'down' and pac_valid_moves['down']:
-        pac_position[1] -= pac_speed
+        pac_pos[1] -= pac_speed
 
 def collision_with_point_dots():
-    global pac_position, pointDots, score
-    x, y = pac_position
+    global pac_pos, pointDots, score, totalPointDots, powerUpPoints, power_up, power_up_time, game_win
+    x, y = pac_pos
     if (x, y) in pointDots:
         if pointDots[x, y]:
             pointDots[x, y] = False
-            score += 5
+            if (x,y) in powerUpPoints:
+                power_up = True
+                power_up_time = 400
+                score += 10
+            else:
+                score += 5
+            totalPointDots -= 1
+    if totalPointDots <= 0:
+        game_win = True
+
+def collision_with_ghost(): # function incomplete
+    global pac_pos, ghostInfo, score
+    x, y, r = *pac_pos, 10
+    for ghost in ghostInfo:
+        gx, gy, gr = ghost["ghostX"], ghost["ghostY"], 10
+        center_distance = (x - gx) ** 2 + (y - gy) ** 2
+        radius_sum = r + gr
+        if center_distance < radius_sum:
+            if power_up: # collision occured between pacman and a ghost during power up time
+                score += 50
+                # what will the ghosts do after being eaten? (need to implement)
+            else: # collision occured between pacman and a ghost during normal time
+                # what will pacman and the ghosts do after collision? (need to implement)
+                pass
 
 
 def draw_ghost():
@@ -428,13 +459,31 @@ def update_ghost():
         if ghost["dir"] == "down":
             ghost["ghostY"] -= 1
 
+def view_if_powerup(): # temporary function
+    global power_up
+    if power_up:
+        glColor3f(1,0,0)
+        glPointSize(30)
+        glBegin(GL_POINTS)
+        glVertex2f(250, 50)
+        glEnd()
+        
 
 def animate():
+    global blink_counter, power_up, power_up_time
+    blink_counter = blink_counter + 1 if blink_counter < 10 else 0
+    if power_up:
+        power_up_time -= 1
+        if power_up_time <= 0:
+            power_up = False
+
     check_valid_moves()
     set_direction()
     move_pacman()
     collision_with_point_dots()
+    collision_with_ghost()
     update_ghost()
+    
     glutPostRedisplay()
 
 def specialKeyListener(key, x, y):
@@ -501,7 +550,7 @@ def showScreen():
     glLoadIdentity()
     iterate()
     
-    global pause, walls, game, pac_position
+    global pause, walls, game, pac_pos
     
     glPointSize(3)
     glColor3f(1, 1, 1)
@@ -534,8 +583,9 @@ def showScreen():
     drawMaze()
     draw_point_dots()
     draw_score()
-    draw_pacman(pac_position)
+    draw_pacman(pac_pos)
     draw_ghost()
+    view_if_powerup() # temporary function to check power up lasting time
     
     glutSwapBuffers()
 
