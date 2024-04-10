@@ -162,8 +162,8 @@ def draw_line(x1,y1,x2,y2, pointSize = 2):
         glVertex2f(p[0],p[1])
     glEnd()
 
-def draw_points(x, y):
-    glPointSize(2) #pixel size. by default 1 thake
+def draw_points(x, y, pointSize = 2):
+    glPointSize(pointSize) #pixel size. by default 1 thake
     glBegin(GL_POINTS) 
     glVertex2f(x,y) #jekhane show korbe pixel
     glEnd()
@@ -479,7 +479,7 @@ def draw_ghost_eyes(ghostX, ghostY, ghostRad, dir):
 def draw_ghost_mouth(ghostX, ghostY):
     global GhostMouthRad, setGhostMouth
     mouthX = ghostX
-    mouthY = ghostY - 3
+    mouthY = ghostY - 4
     curTime = time.time()
     if curTime - setGhostMouth >= 0.3:
         setGhostMouth = curTime
@@ -552,9 +552,18 @@ def view_if_powerup(): # temporary function
         glEnd()
         
 
-def fill_hearts(cx, cy, base_width):
-    glColor3f(1, 0.624, 0.835)
 
+def add_shine_to_hearts(cx, cy):
+    glColor3f(1, 1, 1)
+    pointSize = 3
+    draw_points(cx-3*pointSize, cy, pointSize)
+    draw_points(cx-2*pointSize, cy, pointSize)
+    draw_points(cx-3*pointSize, cy-pointSize, pointSize)
+    draw_points(cx-pointSize, cy-2*pointSize, pointSize)
+
+
+def fill_hearts(cx, cy, base_width):
+    glColor3f(0.988, 0.455, 0.643)
     red = 2
     red2 = 0.4
     for i in range(4):
@@ -567,17 +576,18 @@ def fill_hearts(cx, cy, base_width):
         red += 1
 
     red = 2
-    for i in range(5):
+    for i in range(1, 5):
         draw_line( cx - 3*base_width + red, cy- i, cx+3*base_width-red- red2 , cy-i)
 
     red = 2
     for i in range(14):
         draw_line( cx - 3*base_width + red, cy - base_width- i, cx+3*base_width-red- red2 , cy-base_width-i)
         red += 1
+    
 
     
 def draw_hearts():
-    glColor3f(0.922, 0, 0.396)
+    glColor3f(0.914, 0.306, 0.518)
     cx, cy = 390, 50
     height = 25
     base_width = 5
@@ -597,6 +607,7 @@ def draw_hearts():
         draw_line(cx - 3*base_width, cy, cx - 3*base_width, cy - base_width, pointSize)
         draw_line(cx - 3*base_width, cy - base_width, cx, cy - 4*base_width, pointSize)
         fill_hearts(cx, cy, base_width)
+        add_shine_to_hearts(cx, cy)
         cx += between_gap
 
 
