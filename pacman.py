@@ -314,14 +314,19 @@ pointDots = {(25, 115): True, (115, 115): True, (475, 115): True, (385, 115): Tr
              (302, 280): True, (302, 220): True, (317, 280): True, (317, 220): True, (332, 280): True, (332, 220): True, (242, 235): True, 
              (242, 250): True, (242, 265): True, (257, 235): True, (257, 250): True, (257, 265): True, (235, 325): False, (250, 325): False, 
              (265, 325): False, (155, 325): False, (345, 325): False, (155, 175): False, (345, 175): False}
-
+totalPointDots = len(dict(filter(lambda x: (x[1] == True), pointDots.items())))
+powerUpPoints = [(25, 115), (25, 385), (475, 115), (475, 385)]
+blink_counter = 0
 
 pause=False
-pac_pos=[250,325]
+pac_pos = [250,325]
 pac_direction = 'right'
 pac_direction_command = 'right'
 pac_speed = 1
 pac_valid_moves = {'right' : False, 'left' : False, 'up' : False, 'down' : False}
+power_up = False
+power_up_time = 0
+game_win = False
 score = 0
 game=True
 
@@ -333,14 +338,43 @@ def drawMaze():
         draw_line(i[0],i[1],i[2],i[3])
 
 def draw_point_dots():
-    global pointDots
-    glPointSize(3)
+    global pointDots, powerUpPoints, blink_counter
     glColor3f(1,1,1)
-    glBegin(GL_POINTS)
     for point in pointDots:
         if pointDots[point]:
+            if point in powerUpPoints and blink_counter < 5:
+                glPointSize(7)
+            else:
+                glPointSize(3)
+            glBegin(GL_POINTS)
             glVertex2f(*point)
-    glEnd()
+            glEnd()
+    
+def draw_score():
+    global score
+    for i, digit in enumerate(str(score)):
+        start = 20 + 40 * i, 30
+        pointA = start
+        pointB = pointA[0] + 30, pointA[1]
+        pointC = pointA[0], pointA[1] + 20
+        pointD = pointB[0], pointB[1] + 20
+        pointE = pointC[0], pointC[1] + 20
+        pointF = pointD[0], pointD[1] + 20
+        
+        if digit in "0,2,3,5,6,7,8,9":
+            draw_line(*pointE, *pointF)
+        if digit in "2,3,4,5,6,8,9":
+            draw_line(*pointC, *pointD)
+        if digit in "0,2,3,5,6,8,9":
+            draw_line(*pointA, *pointB)
+        if digit in "0,2,6,8":
+            draw_line(*pointA, *pointC)
+        if digit in "0,4,5,6,7,8,9":
+            draw_line(*pointC, *pointE)
+        if digit in "0,1,3,4,5,6,7,8,9":
+            draw_line(*pointB, *pointD)
+        if digit in "0,1,2,3,4,7,8,9":
+            draw_line(*pointD, *pointF)
 
 def draw_pacman(l):
     x,y=l
@@ -379,12 +413,35 @@ def move_pacman():
         pac_pos[1] -= pac_speed
 
 def collision_with_point_dots():
-    global pac_pos, pointDots, score
+    global pac_pos, pointDots, score, totalPointDots, powerUpPoints, power_up, power_up_time, game_win
     x, y = pac_pos
     if (x, y) in pointDots:
         if pointDots[x, y]:
             pointDots[x, y] = False
-            score += 10
+            if (x,y) in powerUpPoints:
+                power_up = True
+                power_up_time = 400
+                score += 10
+            else:
+                score += 5
+            totalPointDots -= 1
+    if totalPointDots <= 0:
+        game_win = True
+
+def collision_with_ghost(): # function incomplete
+    global pac_pos, ghostInfo, score
+    x, y, r = *pac_pos, 10
+    for ghost in ghostInfo:
+        gx, gy, gr = ghost["ghostX"], ghost["ghostY"], 10
+        center_distance = (x - gx) ** 2 + (y - gy) ** 2
+        radius_sum = r + gr
+        if center_distance < radius_sum:
+            if power_up: # collision occured between pacman and a ghost during power up time
+                score += 50
+                # what will the ghosts do after being eaten? (need to implement)
+            else: # collision occured between pacman and a ghost during normal time
+                # what will pacman and the ghosts do after collision? (need to implement)
+                pass
 
 
 def draw_ghost_eyes(ghostX, ghostY, ghostRad, dir):
@@ -485,6 +542,15 @@ def update_ghost():
         if ghost["dir"] == "down":
             ghost["ghostY"] -= 1
 
+def view_if_powerup(): # temporary function
+    global power_up
+    if power_up:
+        glColor3f(1,0,0)
+        glPointSize(30)
+        glBegin(GL_POINTS)
+        glVertex2f(250, 50)
+        glEnd()
+        
 
 def fill_hearts(cx, cy, base_width):
     glColor3f(1, 0.624, 0.835)
@@ -535,11 +601,20 @@ def draw_hearts():
 
 
 def animate():
+    global blink_counter, power_up, power_up_time
+    blink_counter = blink_counter + 1 if blink_counter < 10 else 0
+    if power_up:
+        power_up_time -= 1
+        if power_up_time <= 0:
+            power_up = False
+
     check_valid_moves()
     set_direction()
     move_pacman()
     collision_with_point_dots()
+    collision_with_ghost()
     update_ghost()
+    
     glutPostRedisplay()
 
 
@@ -644,9 +719,12 @@ def showScreen():
 
     drawMaze()
     draw_point_dots()
+    draw_score()
     draw_pacman(pac_pos)
     draw_ghost()
     draw_hearts()
+
+    view_if_powerup() # temporary function to check power up lasting time
     
     glutSwapBuffers()
 
