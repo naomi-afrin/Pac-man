@@ -117,7 +117,7 @@ def generate_points(x1,y1,x2,y2):
     p.append([x2,y2])
     return p
 
-def draw_line(x1,y1,x2,y2):
+def draw_line(x1,y1,x2,y2, pointSize = 2):
     zone=None
     dx=x2-x1
     dy=y2-y1
@@ -156,14 +156,14 @@ def draw_line(x1,y1,x2,y2):
     if zone!=0:
         points=from_zone0(points,zone)
 
-    glPointSize(2)
+    glPointSize(pointSize)
     glBegin(GL_POINTS)
     for p in points:
         glVertex2f(p[0],p[1])
     glEnd()
 
 def draw_points(x, y):
-    glPointSize(10) #pixel size. by default 1 thake
+    glPointSize(2) #pixel size. by default 1 thake
     glBegin(GL_POINTS) 
     glVertex2f(x,y) #jekhane show korbe pixel
     glEnd()
@@ -486,22 +486,53 @@ def update_ghost():
             ghost["ghostY"] -= 1
 
 
+def fill_hearts(cx, cy, base_width):
+    glColor3f(1, 0.624, 0.835)
+
+    red = 2
+    red2 = 0.4
+    for i in range(4):
+        draw_line(cx+red, cy+i, cx + 3*base_width - red - red2, cy+ i)
+        red += 1
+
+    red = 2
+    for i in range(4):
+        draw_line(cx - 3*base_width + red, cy+ i, cx-red- red2, cy+i)
+        red += 1
+
+    red = 2
+    for i in range(5):
+        draw_line( cx - 3*base_width + red, cy- i, cx+3*base_width-red- red2 , cy-i)
+
+    red = 2
+    for i in range(14):
+        draw_line( cx - 3*base_width + red, cy - base_width- i, cx+3*base_width-red- red2 , cy-base_width-i)
+        red += 1
+
+    
 def draw_hearts():
-    glColor3f(1, 0, 0)
+    glColor3f(0.922, 0, 0.396)
     cx, cy = 390, 50
     height = 25
+    base_width = 5
+    between_gap = 40
+    red = 0
+    pointSize = 4
     for i in range(lifeCount):
-        draw_line(cx, cy, cx+5, cy+5)
-        draw_line(cx+5, cy+5, cx+10, cy+5)
-        draw_line(cx+10, cy+5, cx+15, cy)
-        draw_line(cx+15, cy, cx+15, cy-5)
-        draw_line(cx+15, cy-5, cx, cy-20)
-        draw_line(cx, cy, cx - 5, cy + 5)
-        draw_line(cx - 10, cy + 5, cx - 5, cy + 5)
-        draw_line(cx - 10, cy + 5, cx - 15, cy)
-        draw_line(cx - 15, cy, cx - 15, cy - 5)
-        draw_line(cx - 15, cy - 5, cx, cy - 20)
-        cx += 40
+        glColor3f(0.922, 0, 0.396)
+        draw_line(cx, cy, cx+base_width, cy+base_width, pointSize)
+        draw_line(cx+base_width, cy+base_width, cx+2*base_width, cy+base_width, pointSize)
+        draw_line(cx+2*base_width, cy+base_width, cx+3*base_width, cy, pointSize)
+        draw_line(cx+3*base_width, cy, cx+3*base_width, cy-base_width, pointSize)
+        draw_line(cx+3*base_width, cy-base_width, cx, cy-4*base_width, pointSize)
+        draw_line(cx, cy, cx - base_width, cy + base_width, pointSize)
+        draw_line(cx - 2*base_width, cy + base_width, cx - base_width, cy + base_width, pointSize)
+        draw_line(cx - 2*base_width, cy + base_width, cx - 3*base_width, cy, pointSize)
+        draw_line(cx - 3*base_width, cy, cx - 3*base_width, cy - base_width, pointSize)
+        draw_line(cx - 3*base_width, cy - base_width, cx, cy - 4*base_width, pointSize)
+        fill_hearts(cx, cy, base_width)
+        cx += between_gap
+
 
 def animate():
     check_valid_moves()
@@ -510,6 +541,7 @@ def animate():
     collision_with_point_dots()
     update_ghost()
     glutPostRedisplay()
+
 
 def specialKeyListener(key, x, y):
     global pac_direction_command
@@ -522,7 +554,8 @@ def specialKeyListener(key, x, y):
         pac_direction_command = 'up'
     if key== GLUT_KEY_DOWN:
         pac_direction_command = 'down'
-    
+
+
 def specialKeyUpListener(key, x, y):
     global pac_direction_command, pac_direction
 
@@ -535,13 +568,16 @@ def specialKeyUpListener(key, x, y):
     if key== GLUT_KEY_DOWN and pac_direction_command == 'down':
         pac_direction_command = pac_direction
 
+
 def keyboardListener():
     pass
+
 
 def coordinate_converter(x,y):
     global W_Height
     y=W_Height-y
     return x,y
+
 
 def mouseListener(button, state, x, y):
     global walls, game, pause
@@ -569,6 +605,7 @@ def mouseListener(button, state, x, y):
             elif 460<=x1<=490 and 465<=y1<=500:
                 glutLeaveMainLoop()
     glutPostRedisplay()
+
 
 def showScreen():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) 
@@ -612,6 +649,7 @@ def showScreen():
     draw_hearts()
     
     glutSwapBuffers()
+
 
 def iterate():
     glViewport(0, 0, 500, 500)
