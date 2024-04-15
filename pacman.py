@@ -248,6 +248,50 @@ def draw_circle(x,y,r):
         glVertex2f(i[0],i[1])
     glEnd()
 
+def draw_pac_circle(x,y,r):
+    global pac_direction
+    p=[]
+    
+    x1=0
+    y1=r
+    d=1-r
+    while x1<=y1:
+        p.append([x1,y1])
+        if d>=0:
+            d=d+2*x1-2*y1+5
+            x1=x1+1
+            y1=y1-1
+        else:
+            d=d+2*x1+3
+            x1=x1+1
+    t1=circle_to_zone0(p)
+    t2=circle_to_zone2(p)
+    t3=circle_to_zone3(p)
+    t4=circle_to_zone4(p)
+    t5=circle_to_zone5(p)
+    t6=circle_to_zone6(p)
+    t7=circle_to_zone7(p)
+
+    if pac_direction == 'right':
+        p=p+t2+t3+t4+t5+t6
+    elif pac_direction == 'left':
+        p=p+t1+t2+t5+t6+t7
+    elif pac_direction == 'up':
+        p=t1+t3+t4+t5+t6+t7
+    elif pac_direction == 'down':
+        p=p+t1+t2+t3+t4+t7
+    
+    if x!=0 or y!=0:
+        for i in p:
+            i[0]=i[0]+x
+            i[1]=i[1]+y
+
+    glPointSize(2)
+    glBegin(GL_POINTS)
+    for i in p:
+        glVertex2f(i[0],i[1])
+    glEnd()
+
 
 W_Height = 500
 walls=[[0,410,500,410],[500,410,500,90],[0,410,0,90],[0,90,500,90],
@@ -326,7 +370,7 @@ pac_speed = 1
 pac_valid_moves = {'right' : False, 'left' : False, 'up' : False, 'down' : False}
 power_up = False
 power_up_time = 0
-game_win = False
+game_won = False
 score = 0
 game=True
 
@@ -342,13 +386,15 @@ def draw_point_dots():
     glColor3f(1,1,1)
     for point in pointDots:
         if pointDots[point]:
-            if point in powerUpPoints and blink_counter < 5:
-                glPointSize(7)
+            if point in powerUpPoints:
+                if blink_counter < 5:
+                    for i in range(5):
+                        draw_circle(*point,i + 1)
             else:
-                glPointSize(3)
-            glBegin(GL_POINTS)
-            glVertex2f(*point)
-            glEnd()
+                draw_circle(*point,1)
+            # glBegin(GL_POINTS)
+            # glVertex2f(*point)
+            # glEnd()
     
 def draw_score():
     global score
@@ -379,7 +425,22 @@ def draw_score():
 def draw_pacman(l):
     x,y=l
     glColor3f(1,1,0)
-    draw_circle(x,y,10)
+    for i in range(10):
+        draw_pac_circle(x,y,i + 1)
+    draw_pac_eyes()
+
+def draw_pac_eyes():
+    global pac_direction, pac_pos
+    x, y, r = *pac_pos, 1
+    if pac_direction == 'right' or pac_direction == 'left':
+        y += 5
+    elif pac_direction == 'up':
+        x -= 5
+    elif pac_direction == 'down':
+        x += 5
+    glColor3f(0,0,0)
+    draw_circle(x,y,r)
+    
 
 def check_valid_moves():
     global pac_pos, pac_direction, pac_speed, pac_valid_moves
@@ -413,7 +474,7 @@ def move_pacman():
         pac_pos[1] -= pac_speed
 
 def collision_with_point_dots():
-    global pac_pos, pointDots, score, totalPointDots, powerUpPoints, power_up, power_up_time, game_win
+    global pac_pos, pointDots, score, totalPointDots, powerUpPoints, power_up, power_up_time, game_won
     x, y = pac_pos
     if (x, y) in pointDots:
         if pointDots[x, y]:
@@ -426,7 +487,7 @@ def collision_with_point_dots():
                 score += 5
             totalPointDots -= 1
     if totalPointDots <= 0:
-        game_win = True
+        game_won = True
 
 def collision_with_ghost(): # function incomplete
     global pac_pos, ghostInfo, score
@@ -541,6 +602,7 @@ def update_ghost():
             ghost["ghostY"] += 1
         if ghost["dir"] == "down":
             ghost["ghostY"] -= 1
+
 
 def view_if_powerup(): # temporary function
     global power_up
@@ -699,12 +761,6 @@ def showScreen():
     iterate()
     
     global pause, walls, game, pac_pos
-    
-    glPointSize(3)
-    glColor3f(1, 1, 1)
-    glBegin(GL_POINTS)
-    
-    glEnd()
 
     #cross
     glColor3f(1.0, .0, 0.0) 
