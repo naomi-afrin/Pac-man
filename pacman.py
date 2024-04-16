@@ -5,7 +5,7 @@ import random
 import time
 
 ## ghost info
-color = {"pink": [0.996, 0.498, 1], "blue":[0.278, 0.729, 0.988], "orange":[1, 0.686, 0.278], "red":[0.988, 0.024, 0.024]}
+color = {"pink": [0.996, 0.498, 1], "blue":[0.278, 0.729, 0.988], "orange":[1, 0.686, 0.278], "red":[0.988, 0.024, 0.024], "white": [1, 1, 1], "black": [0, 0, 0], "dark_blue": [0.059, 0.075, 0.839]}
 
 changeDirPoints = {(25, 385): ["right", "down"], (115, 385): ["right", "left", "down"], (230, 385): ["left", "down"], (270, 385): ["right", "down"], (385, 385): ["right", "left", "down"], (475, 385): ["left", "down"],
                    (25, 325): ["right", "up", "down"], (115, 325): ["right", "left", "up", "down"], (155, 325): ["right", "left"], (230, 325): ["right", "left", "up"], (270, 325): ["right", "left", "up"], (345, 325): ["right", "left", "down"], (385, 325): ["right", "left", "up", "down"], (475, 325): ["left", "up", "down"],
@@ -16,15 +16,17 @@ changeDirPoints = {(25, 385): ["right", "down"], (115, 385): ["right", "left", "
                    (25, 115): ["right", "up"], (115, 115): ["right", "left", "up"], (230, 115): ["right", "left", "up"], (270, 115): ["right","left", "up"], (385, 115): ["right", "left", "up"], (475, 115): ["left", "up"]       
                    }
 
+powerUpMode = False # temp
 
 def ghost_initial():
-    global ghostInfo, ghostEyeUp, setGhostMouth, GhostMouthRad
+    global ghostInfo, ghostEyeUp, setGhostMouth, GhostMouthRad, powerUpModee
     ghostInfo = [ {"ghostX": 230, "ghostY": 220, "color": "pink", "dir": "left"}, 
              {"ghostX": 270, "ghostY": 220, "color": "blue", "dir": "right"},
              {"ghostX": 230, "ghostY": 280, "color": "orange", "dir": "left"},
              {"ghostX": 270, "ghostY": 280, "color": "red", "dir": "right"}]
     setGhostMouth = time.time()
     GhostMouthRad = 2
+    powerUpModee = False
     
 
 def pacman_initial():
@@ -481,6 +483,7 @@ def collision_with_point_dots():
             pointDots[x, y] = False
             if (x,y) in powerUpPoints:
                 power_up = True
+                powerUp_mode(True)  # To start powerUp mode ghost
                 power_up_time = 400
                 score += 10
             else:
@@ -500,6 +503,7 @@ def collision_with_ghost(): # function incomplete
             if power_up: # collision occured between pacman and a ghost during power up time
                 score += 50
                 # what will the ghosts do after being eaten? (need to implement)
+                
             else: # collision occured between pacman and a ghost during normal time
                 # what will pacman and the ghosts do after collision? (need to implement)
                 pass
@@ -507,7 +511,8 @@ def collision_with_ghost(): # function incomplete
 
 def draw_ghost_eyes(ghostX, ghostY, ghostRad, dir):
     global ghostEyeUp
-    glColor3f(1, 1, 1)
+    cl1, cl2, cl3 = color["white"]
+    glColor3f(cl1, cl2, cl3)
     outerEyeRad = 3
     left_eyeX = ghostX - (ghostRad//2)
     left_eyeY = ghostY + (ghostRad//2)
@@ -517,7 +522,9 @@ def draw_ghost_eyes(ghostX, ghostY, ghostRad, dir):
         draw_circle(left_eyeX, left_eyeY, rad)
         draw_circle(right_eyeX, right_eyeY, rad)
 
-    glColor3f(0.055, 0.376, 0.922)
+
+    cl1, cl2, cl3 = 0.055, 0.376, 0.922
+    glColor3f(cl1, cl2, cl3)
     innerEyeRad = 1
     left_eyeX = ghostX - (ghostRad//2)
     left_eyeY = ghostY + (ghostRad//2)
@@ -539,6 +546,10 @@ def draw_ghost_eyes(ghostX, ghostY, ghostRad, dir):
 
 def draw_ghost_mouth(ghostX, ghostY):
     global GhostMouthRad, setGhostMouth
+    global ghostEyeUp
+
+    cl1, cl2, cl3 = color["white"]
+    glColor3f(cl1, cl2, cl3)
     mouthX = ghostX
     mouthY = ghostY - 4
     curTime = time.time()
@@ -550,7 +561,6 @@ def draw_ghost_mouth(ghostX, ghostY):
             GhostMouthRad = 0
         elif GhostMouthRad == 0:
             GhostMouthRad = 2
-    glColor3f(1, 1, 1)
     for r in range(GhostMouthRad, -1, -1):
         draw_circle(mouthX, mouthY, r)
 
@@ -564,23 +574,95 @@ def draw_ghost():
         
         lineX = ghost["ghostX"] - ghostRad
         lineY = ghost["ghostY"]
+
         
-        if ghost["dir"] == "right":
-            addX = -4
-        elif ghost["dir"] == "left":
-            addX = 4
-        else:
-            addX = 0
-        
-        addX = 0
         for lines in range(2*ghostRad+1):
-            draw_line(lineX, lineY, lineX + addX, lineY-10)
+            draw_line(lineX, lineY, lineX, lineY-10)
             lineX += 1
         
         draw_ghost_eyes(ghost["ghostX"], ghost["ghostY"], ghostRad, ghost["dir"])
         draw_ghost_mouth(ghost["ghostX"], ghost["ghostY"])
 
 
+def powerUp_mode(start): 
+    global powerUpMode, powerUp_mode_start, powerUp_mode_color
+    if start:
+        powerUpMode = True
+        powerUp_mode_start = time.time()
+    else:
+        powerUpMode  = False
+    glColor3f(1, 1, 1)
+    powerUp_mode_color = "white"
+
+
+def draw_powerUp_mode_eyes(ghostX, ghostY, ghostRad):
+    glColor3f(0, 0, 0)
+    halfWidth = 2
+    left_eyeX1 = ghostX - (ghostRad//2) - halfWidth
+    left_eyeX2 = ghostX - (ghostRad//2) + halfWidth
+    left_eyeY1 = ghostY + (ghostRad//2) + halfWidth
+    left_eyeY2 = ghostY + (ghostRad//2) - halfWidth
+    left_eyeX3 = left_eyeX2
+    left_eyeX4 = left_eyeX1
+    left_eyeY3 = left_eyeY1
+    left_eyeY4 = left_eyeY2
+    right_eyeX1 = ghostX + (ghostRad//2) - halfWidth
+    right_eyeX2 = ghostX + (ghostRad//2) + halfWidth
+    right_eyeY1 = ghostY + (ghostRad//2) - halfWidth
+    right_eyeY2 = ghostY + (ghostRad//2) + halfWidth
+    right_eyeX3 = right_eyeX2
+    right_eyeX4 = right_eyeX1
+    right_eyeY3 = right_eyeY1
+    right_eyeY4 = right_eyeY2
+
+    draw_line(left_eyeX1, left_eyeY1, left_eyeX2, left_eyeY2, 1.5)
+    draw_line(left_eyeX4, left_eyeY4, left_eyeX3, left_eyeY3, 1.5)
+    draw_line(right_eyeX1, right_eyeY1, right_eyeX2, right_eyeY2, 1.5)
+    draw_line(right_eyeX4, right_eyeY4, right_eyeX3, right_eyeY3, 1.5)
+
+
+def draw_powerUp_mode_mouth(ghostX, ghostY, ghostRad):
+    glColor3f(0, 0, 0)
+    halfLen = 5
+    mouthX1 = ghostX - halfLen
+    mouthX2 = ghostX + halfLen
+    mouthY1 = ghostY - halfLen
+    mouthY2 = ghostY - halfLen
+    draw_line(mouthX1, mouthY1, mouthX2, mouthY2, 3)
+
+def draw_special_ghost():
+    global powerUpMode, powerUp_mode_start, powerUp_mode_color
+    curTime = time.time()
+    if curTime - powerUp_mode_start>= 0.5:
+        powerUp_mode_start = curTime
+        if powerUp_mode_color == "white":
+            powerUp_mode_color = "dark_blue"
+        else:
+            powerUp_mode_color = "white"
+    for ghost in ghostInfo:
+        cl1, cl2, cl3 = color[powerUp_mode_color]
+        glColor3f(cl1, cl2, cl3)
+        ghostRad = 10
+        for rad in range(ghostRad, -1, -1):
+            draw_circle(ghost["ghostX"], ghost["ghostY"], rad)
+        
+        lineX = ghost["ghostX"] - ghostRad
+        lineY = ghost["ghostY"]
+
+        
+        for lines in range(2*ghostRad+1):
+            draw_line(lineX, lineY, lineX, lineY-10)
+            lineX += 1
+        draw_powerUp_mode_eyes(ghost["ghostX"], ghost["ghostY"], ghostRad)
+        draw_powerUp_mode_mouth(ghost["ghostX"], ghost["ghostY"], ghostRad)
+
+
+def choose_ghost():
+    global powerUpMode
+    if powerUpMode:
+        draw_special_ghost()
+    else:
+        draw_ghost()
 
 def change_dir():
     for ghost in ghostInfo:
@@ -674,12 +756,13 @@ def draw_hearts():
 
 
 def animate():
-    global blink_counter, power_up, power_up_time
+    global blink_counter, power_up, power_up_time, special
     blink_counter = blink_counter + 1 if blink_counter < 10 else 0
     if power_up:
         power_up_time -= 1
         if power_up_time <= 0:
             power_up = False
+            powerUp_mode(False)  # To end powerUp mode ghost
 
     check_valid_moves()
     set_direction()
@@ -687,6 +770,7 @@ def animate():
     collision_with_point_dots()
     collision_with_ghost()
     update_ghost()
+    
     
     glutPostRedisplay()
 
@@ -756,6 +840,7 @@ def mouseListener(button, state, x, y):
 
 
 def showScreen():
+    global special
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) 
     glLoadIdentity()
     iterate()
@@ -788,7 +873,7 @@ def showScreen():
     draw_point_dots()
     draw_score()
     draw_pacman(pac_pos)
-    draw_ghost()
+    choose_ghost()
     draw_hearts()
 
     view_if_powerup() # temporary function to check power up lasting time
