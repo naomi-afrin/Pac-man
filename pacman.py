@@ -503,14 +503,22 @@ def collision_with_ghost(): # function incomplete
             if power_up: # collision occured between pacman and a ghost during power up time
                 score += 50
                 # what will the ghosts do after being eaten? (need to implement)
+                reposition_ghost(ghost) # The eaten ghost will be repositioned to the middle
+                
                 
             else: # collision occured between pacman and a ghost during normal time
                 # what will pacman and the ghosts do after collision? (need to implement)
                 pass
 
 
+def reposition_ghost(ghost):
+    global ghostInfo
+    ghost["ghostX"] = 250
+    ghost["ghostY"] = 280
+
+
+
 def draw_ghost_eyes(ghostX, ghostY, ghostRad, dir):
-    global ghostEyeUp
     cl1, cl2, cl3 = color["white"]
     glColor3f(cl1, cl2, cl3)
     outerEyeRad = 3
