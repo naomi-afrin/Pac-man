@@ -366,6 +366,7 @@ blink_counter = 0
 
 pause=False
 pac_pos = [250,325]
+pac_size = 10
 pac_direction = 'right'
 pac_direction_command = 'right'
 pac_speed = 1
@@ -373,6 +374,7 @@ pac_valid_moves = {'right' : False, 'left' : False, 'up' : False, 'down' : False
 power_up = False
 power_up_time = 0
 game_won = False
+game_over = False
 score = 0
 game=True
 
@@ -394,12 +396,10 @@ def draw_point_dots():
                         draw_circle(*point,i + 1)
             else:
                 draw_circle(*point,1)
-            # glBegin(GL_POINTS)
-            # glVertex2f(*point)
-            # glEnd()
     
 def draw_score():
     global score
+    glColor3f(1,1,1)
     for i, digit in enumerate(str(score)):
         start = 20 + 40 * i, 30
         pointA = start
@@ -425,9 +425,10 @@ def draw_score():
             draw_line(*pointD, *pointF)
 
 def draw_pacman(l):
+    global pac_size
     x,y=l
     glColor3f(1,1,0)
-    for i in range(10):
+    for i in range(pac_size):
         draw_pac_circle(x,y,i + 1)
     draw_pac_eyes()
 
@@ -476,13 +477,14 @@ def move_pacman():
         pac_pos[1] -= pac_speed
 
 def collision_with_point_dots():
-    global pac_pos, pointDots, score, totalPointDots, powerUpPoints, power_up, power_up_time, game_won
+    global pac_pos, pac_size, pointDots, score, totalPointDots, powerUpPoints, power_up, power_up_time, game_won
     x, y = pac_pos
     if (x, y) in pointDots:
         if pointDots[x, y]:
             pointDots[x, y] = False
             if (x,y) in powerUpPoints:
                 power_up = True
+                pac_size = 12
                 powerUp_mode(True)  # To start powerUp mode ghost
                 power_up_time = 400
                 score += 10
@@ -492,23 +494,71 @@ def collision_with_point_dots():
     if totalPointDots <= 0:
         game_won = True
 
-def collision_with_ghost(): # function incomplete
-    global pac_pos, ghostInfo, score
-    x, y, r = *pac_pos, 10
+def collision_with_ghost():
+    global pac_pos, pac_size, ghostInfo, score, pac_direction, pac_direction_command, lifeCount, game_over
+    x, y, r = *pac_pos, pac_size
     for ghost in ghostInfo:
         gx, gy, gr = ghost["ghostX"], ghost["ghostY"], 10
         center_distance = (x - gx) ** 2 + (y - gy) ** 2
-        radius_sum = r + gr
-        if center_distance < radius_sum:
-            if power_up: # collision occured between pacman and a ghost during power up time
+        radius_sum = (r + gr) ** 2
+        if center_distance < radius_sum - 2:
+            time.sleep(0.5)
+            if power_up:
                 score += 50
-                # what will the ghosts do after being eaten? (need to implement)
-                reposition_ghost(ghost) # The eaten ghost will be repositioned to the middle
-                
-                
-            else: # collision occured between pacman and a ghost during normal time
-                # what will pacman and the ghosts do after collision? (need to implement)
-                pass
+                reposition_ghost(ghost)  
+            else:
+                lifeCount -= 1
+                if lifeCount <= 0:
+                    game_over = True
+                ghost_initial()
+                pac_pos = [250,325]
+                pac_direction = 'right'
+                pac_direction_command = 'right'
+
+def draw_end_screen(word):
+    glColor3f(1,1,0)
+    start = 250 - (len(word) / 2 ) * 40
+    for i, char in enumerate(word.upper()):
+        pointA = start + 40 * i, 250 - 20
+        pointB = pointA[0] + 30, pointA[1]
+        pointC = pointA[0], pointA[1] + 20
+        pointD = pointB[0], pointB[1] + 20
+        pointE = pointC[0], pointC[1] + 20
+        pointF = pointD[0], pointD[1] + 20
+        
+        if char in "A,E,G,O,R":
+            draw_line(*pointE, *pointF)
+        if char in "A,R":
+            draw_line(*pointC, *pointD)
+        if char in "E,G,O,U":
+            draw_line(*pointA, *pointB)
+        if char in "A,E,G,M,N,O,R,U,W":
+            draw_line(*pointA, *pointC)
+        if char in "A,E,G,M,N,O,R,U,W":
+            draw_line(*pointC, *pointE)
+        if char in "A,G,M,N,O,U,W":
+            draw_line(*pointB, *pointD)
+        if char in "A,M,N,O,R,U,W":
+            draw_line(*pointD, *pointF)
+        if char in "E":
+            draw_line(*pointC, (pointC[0] + pointD[0]) // 2, pointC[1])
+        if char in "G":
+            draw_line((pointC[0] + pointD[0]) // 2, pointC[1], *pointD)
+        if char in "N":
+            draw_line(*pointB, *pointE)
+        if char in "R":
+            draw_line(*pointC, *pointB)
+        if char in "W":
+            draw_line(*pointA, (pointC[0] + pointD[0]) // 2, pointC[1])
+            draw_line(*pointB, (pointC[0] + pointD[0]) // 2, pointC[1])
+        if char in "V":
+            draw_line((pointA[0] + pointB[0]) // 2, pointA[1], *pointE)
+            draw_line((pointA[0] + pointB[0]) // 2, pointA[1], *pointF)
+        if char in "M,Y":
+            draw_line(*pointE, (pointC[0] + pointD[0]) // 2, pointC[1])
+            draw_line(*pointF, (pointC[0] + pointD[0]) // 2, pointC[1])
+        if char in "Y":
+            draw_line((pointA[0] + pointB[0]) // 2, pointA[1], (pointC[0] + pointD[0]) // 2, pointC[1])
 
 
 def reposition_ghost(ghost):
@@ -764,12 +814,17 @@ def draw_hearts():
 
 
 def animate():
-    global blink_counter, power_up, power_up_time, special
+    global blink_counter, power_up, power_up_time, pac_pos, pac_size, pause, game_won, game_over, special
+    if score == 0 and pac_pos[0] == 250:
+        time.sleep(0.5) 
+    if pause or game_won or game_over:
+        return
     blink_counter = blink_counter + 1 if blink_counter < 10 else 0
     if power_up:
         power_up_time -= 1
         if power_up_time <= 0:
             power_up = False
+            pac_size = 10
             powerUp_mode(False)  # To end powerUp mode ghost
 
     check_valid_moves()
@@ -853,7 +908,7 @@ def showScreen():
     glLoadIdentity()
     iterate()
     
-    global pause, walls, game, pac_pos
+    global pause, walls, game, pac_pos, game_won, game_over
 
     #cross
     glColor3f(1.0, .0, 0.0) 
@@ -877,15 +932,18 @@ def showScreen():
     draw_line(20,480,45,465)
     draw_line(20,480,55,480)
 
-    drawMaze()
-    draw_point_dots()
+    if game_won:
+        draw_end_screen("You won")
+    elif game_over:
+        draw_end_screen("Game over")
+    else:
+        drawMaze()
+        draw_point_dots()
+        draw_pacman(pac_pos)
+        choose_ghost()
+        draw_hearts()
+        view_if_powerup() # temporary function to check power up lasting time
     draw_score()
-    draw_pacman(pac_pos)
-    choose_ghost()
-    draw_hearts()
-
-    view_if_powerup() # temporary function to check power up lasting time
-    
     glutSwapBuffers()
 
 
@@ -905,7 +963,7 @@ glutInitWindowPosition(0, 0)
 wind = glutCreateWindow(b"PACMAN") 
 ghost_initial()
 pacman_initial()
-glutDisplayFunc(showScreen) 
+glutDisplayFunc(showScreen)
 glutIdleFunc(animate)
 glutSpecialFunc(specialKeyListener)
 glutSpecialUpFunc(specialKeyUpListener)
