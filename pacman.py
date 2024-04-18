@@ -16,22 +16,77 @@ changeDirPoints = {(25, 385): ["right", "down"], (115, 385): ["right", "left", "
                    (25, 115): ["right", "up"], (115, 115): ["right", "left", "up"], (230, 115): ["right", "left", "up"], (270, 115): ["right","left", "up"], (385, 115): ["right", "left", "up"], (475, 115): ["left", "up"]       
                    }
 
-powerUpMode = False # temp
 
 def ghost_initial():
-    global ghostInfo, ghostEyeUp, setGhostMouth, GhostMouthRad, powerUpModee
+    global ghostInfo, setGhostMouth, GhostMouthRad, powerUpMode
     ghostInfo = [ {"ghostX": 230, "ghostY": 220, "color": "pink", "dir": "left"}, 
              {"ghostX": 270, "ghostY": 220, "color": "blue", "dir": "right"},
              {"ghostX": 230, "ghostY": 280, "color": "orange", "dir": "left"},
              {"ghostX": 270, "ghostY": 280, "color": "red", "dir": "right"}]
     setGhostMouth = time.time()
     GhostMouthRad = 2
-    powerUpModee = False
+    powerUpMode = False
     
 
 def pacman_initial():
-    global lifeCount
+    global lifeCount, pointDots, totalPointDots, powerUpPoints, blink_counter, pause, pac_pos, pac_size, pac_direction, pac_direction_command, pac_speed, pac_valid_moves , power_up, power_up_time, game_won, game_over, score, game, lifeCount
     lifeCount = 3
+    pointDots = {(25, 115): True, (115, 115): True, (475, 115): True, (385, 115): True, (25, 130): True, (115, 130): True, (475, 130): True, 
+             (385, 130): True, (25, 145): True, (115, 145): True, (475, 145): True, (385, 145): True, (25, 160): True, (115, 160): True, 
+             (475, 160): True, (385, 160): True, (25, 175): True, (115, 175): True, (475, 175): True, (385, 175): True, (25, 190): True, 
+             (115, 190): True, (475, 190): True, (385, 190): True, (25, 205): True, (115, 205): True, (475, 205): True, (385, 205): True, 
+             (25, 220): True, (115, 220): True, (475, 220): True, (385, 220): True, (25, 235): True, (115, 235): True, (475, 235): True, 
+             (385, 235): True, (25, 250): True, (115, 250): True, (475, 250): True, (385, 250): True, (25, 265): True, (115, 265): True, 
+             (475, 265): True, (385, 265): True, (25, 280): True, (115, 280): True, (475, 280): True, (385, 280): True, (25, 295): True, 
+             (115, 295): True, (475, 295): True, (385, 295): True, (25, 310): True, (115, 310): True, (475, 310): True, (385, 310): True, 
+             (25, 325): True, (115, 325): True, (475, 325): True, (385, 325): True, (25, 340): True, (115, 340): True, (475, 340): True, 
+             (385, 340): True, (25, 355): True, (115, 355): True, (475, 355): True, (385, 355): True, (25, 370): True, (115, 370): True, 
+             (475, 370): True, (385, 370): True, (25, 385): True, (115, 385): True, (475, 385): True, (385, 385): True, (230, 115): True, 
+             (270, 115): True, (230, 130): True, (270, 130): True, (230, 145): True, (270, 145): True, (230, 160): True, (270, 160): True, 
+             (230, 175): True, (270, 175): True, (242, 115): True, (258, 115): True, (230, 325): True, (270, 325): True, (230, 340): True, 
+             (270, 340): True, (230, 355): True, (270, 355): True, (230, 370): True, (270, 370): True, (230, 385): True, (270, 385): True, 
+             (40, 115): True, (40, 385): True, (460, 385): True, (460, 115): True, (55, 115): True, (55, 385): True, (445, 385): True, 
+             (445, 115): True, (70, 115): True, (70, 385): True, (430, 385): True, (430, 115): True, (85, 115): True, (85, 385): True, 
+             (415, 385): True, (415, 115): True, (100, 115): True, (100, 385): True, (400, 385): True, (400, 115): True, (130, 115): True, 
+             (130, 385): True, (370, 385): True, (370, 115): True, (145, 115): True, (145, 385): True, (355, 385): True, (355, 115): True, 
+             (160, 115): True, (160, 385): True, (340, 385): True, (340, 115): True, (175, 115): True, (175, 385): True, (325, 385): True, 
+             (325, 115): True, (190, 115): True, (190, 385): True, (310, 385): True, (310, 115): True, (205, 115): True, (205, 385): True, 
+             (295, 385): True, (295, 115): True, (220, 115): True, (220, 385): True, (280, 385): True, (280, 115): True, (40, 175): True, 
+             (40, 325): True, (460, 175): True, (460, 325): True, (55, 175): True, (55, 325): True, (445, 175): True, (445, 325): True, 
+             (70, 175): True, (70, 325): True, (430, 175): True, (430, 325): True, (85, 175): True, (85, 325): True, (415, 175): True, 
+             (415, 325): True, (100, 175): True, (100, 325): True, (400, 175): True, (400, 325): True, (130, 175): True, (130, 325): True, 
+             (370, 175): True, (370, 325): True, (145, 175): True, (145, 325): True, (355, 175): True, (355, 325): True, (160, 175): True, 
+             (160, 325): True, (340, 175): True, (340, 325): True, (175, 175): True, (175, 325): True, (325, 175): True, (325, 325): True, 
+             (190, 175): True, (190, 325): True, (310, 175): True, (310, 325): True, (205, 175): True, (205, 325): True, (295, 175): True, 
+             (295, 325): True, (220, 175): True, (220, 325): True, (280, 175): True, (280, 325): True, (25, 212): False, (25, 288): False, 
+             (475, 212): False, (475, 288): False, (40, 212): True, (40, 288): True, (460, 212): True, (460, 288): True, (55, 212): True, 
+             (55, 288): True, (445, 212): True, (445, 288): True, (70, 212): True, (70, 288): True, (430, 212): True, (430, 288): True, 
+             (85, 212): True, (85, 288): True, (415, 212): True, (415, 288): True, (100, 212): True, (100, 288): True, (400, 212): True, 
+             (400, 288): True, (115, 212): False, (115, 288): False, (385, 212): False, (385, 288): False, (155, 280): True, (345, 280): True, 
+             (155, 220): True, (345, 220): True, (155, 295): True, (345, 295): True, (155, 205): True, (345, 205): True, (155, 310): True, 
+             (345, 310): True, (155, 190): True, (345, 190): True, (167, 280): True, (167, 220): True, (182, 280): True, (182, 220): True, 
+             (197, 280): True, (197, 220): True, (212, 280): True, (212, 220): True, (227, 280): True, (227, 220): True, (242, 280): True, 
+             (242, 220): True, (257, 280): True, (257, 220): True, (272, 280): True, (272, 220): True, (287, 280): True, (287, 220): True, 
+             (302, 280): True, (302, 220): True, (317, 280): True, (317, 220): True, (332, 280): True, (332, 220): True, (242, 235): True, 
+             (242, 250): True, (242, 265): True, (257, 235): True, (257, 250): True, (257, 265): True, (235, 325): False, (250, 325): False, 
+             (265, 325): False, (155, 325): False, (345, 325): False, (155, 175): False, (345, 175): False}
+    totalPointDots = len(dict(filter(lambda x: (x[1] == True), pointDots.items())))
+    powerUpPoints = [(25, 115), (25, 385), (475, 115), (475, 385)]
+    blink_counter = 0
+
+    pause=False
+    pac_pos = [250,325]
+    pac_size = 10
+    pac_direction = 'right'
+    pac_direction_command = 'right'
+    pac_speed = 1
+    pac_valid_moves = {'right' : False, 'left' : False, 'up' : False, 'down' : False}
+    power_up = False
+    power_up_time = 0
+    game_won = False
+    game_over = False
+    score = 0
+    game=True
     
 
 def to_zone0(x1,y1,x2,y2,z):
@@ -250,6 +305,42 @@ def draw_circle(x,y,r):
         glVertex2f(i[0],i[1])
     glEnd()
 
+
+def draw_cross():
+    glColor3f(1.0, .0, 0.0) 
+    draw_line(460,495,490,465)
+    draw_line(460,465,490,495)
+
+
+def draw_play():
+    pointSize = 3
+    glColor3f(1.0, 0.9, 0.2)
+    draw_line(246,495,246,465, pointSize)
+    draw_line(266,480,246,465, pointSize)
+    draw_line(246,495,266,480, pointSize)
+
+
+def draw_pause():
+    glColor3f(1.0, 0.9, 0.2)
+    pointSize = 3
+    draw_line(246,495,246,465, pointSize)
+    draw_line(254,495,254,465, pointSize)
+    
+
+def draw_pause_or_play(pause):
+    if pause == True:
+        draw_play()
+    else:
+        draw_pause()
+        
+
+def draw_replay():
+    glColor3f(0.2, 0.6, 1)
+    draw_line(45,495,20,480)
+    draw_line(20,480,45,465)
+    draw_line(20,480,55,480)
+
+
 def draw_pac_circle(x,y,r):
     global pac_direction
     p=[]
@@ -321,62 +412,7 @@ walls=[[0,410,500,410],[500,410,500,90],[0,410,0,90],[0,90,500,90],
        [130,310,130,190],[140,310,140,255],[130,310,140,310],[130,190,140,190],
        [140,255,215,255],[215,255,215,245],[140,245,215,245],[140,245,140,190]]
 
-pointDots = {(25, 115): True, (115, 115): True, (475, 115): True, (385, 115): True, (25, 130): True, (115, 130): True, (475, 130): True, 
-             (385, 130): True, (25, 145): True, (115, 145): True, (475, 145): True, (385, 145): True, (25, 160): True, (115, 160): True, 
-             (475, 160): True, (385, 160): True, (25, 175): True, (115, 175): True, (475, 175): True, (385, 175): True, (25, 190): True, 
-             (115, 190): True, (475, 190): True, (385, 190): True, (25, 205): True, (115, 205): True, (475, 205): True, (385, 205): True, 
-             (25, 220): True, (115, 220): True, (475, 220): True, (385, 220): True, (25, 235): True, (115, 235): True, (475, 235): True, 
-             (385, 235): True, (25, 250): True, (115, 250): True, (475, 250): True, (385, 250): True, (25, 265): True, (115, 265): True, 
-             (475, 265): True, (385, 265): True, (25, 280): True, (115, 280): True, (475, 280): True, (385, 280): True, (25, 295): True, 
-             (115, 295): True, (475, 295): True, (385, 295): True, (25, 310): True, (115, 310): True, (475, 310): True, (385, 310): True, 
-             (25, 325): True, (115, 325): True, (475, 325): True, (385, 325): True, (25, 340): True, (115, 340): True, (475, 340): True, 
-             (385, 340): True, (25, 355): True, (115, 355): True, (475, 355): True, (385, 355): True, (25, 370): True, (115, 370): True, 
-             (475, 370): True, (385, 370): True, (25, 385): True, (115, 385): True, (475, 385): True, (385, 385): True, (230, 115): True, 
-             (270, 115): True, (230, 130): True, (270, 130): True, (230, 145): True, (270, 145): True, (230, 160): True, (270, 160): True, 
-             (230, 175): True, (270, 175): True, (242, 115): True, (258, 115): True, (230, 325): True, (270, 325): True, (230, 340): True, 
-             (270, 340): True, (230, 355): True, (270, 355): True, (230, 370): True, (270, 370): True, (230, 385): True, (270, 385): True, 
-             (40, 115): True, (40, 385): True, (460, 385): True, (460, 115): True, (55, 115): True, (55, 385): True, (445, 385): True, 
-             (445, 115): True, (70, 115): True, (70, 385): True, (430, 385): True, (430, 115): True, (85, 115): True, (85, 385): True, 
-             (415, 385): True, (415, 115): True, (100, 115): True, (100, 385): True, (400, 385): True, (400, 115): True, (130, 115): True, 
-             (130, 385): True, (370, 385): True, (370, 115): True, (145, 115): True, (145, 385): True, (355, 385): True, (355, 115): True, 
-             (160, 115): True, (160, 385): True, (340, 385): True, (340, 115): True, (175, 115): True, (175, 385): True, (325, 385): True, 
-             (325, 115): True, (190, 115): True, (190, 385): True, (310, 385): True, (310, 115): True, (205, 115): True, (205, 385): True, 
-             (295, 385): True, (295, 115): True, (220, 115): True, (220, 385): True, (280, 385): True, (280, 115): True, (40, 175): True, 
-             (40, 325): True, (460, 175): True, (460, 325): True, (55, 175): True, (55, 325): True, (445, 175): True, (445, 325): True, 
-             (70, 175): True, (70, 325): True, (430, 175): True, (430, 325): True, (85, 175): True, (85, 325): True, (415, 175): True, 
-             (415, 325): True, (100, 175): True, (100, 325): True, (400, 175): True, (400, 325): True, (130, 175): True, (130, 325): True, 
-             (370, 175): True, (370, 325): True, (145, 175): True, (145, 325): True, (355, 175): True, (355, 325): True, (160, 175): True, 
-             (160, 325): True, (340, 175): True, (340, 325): True, (175, 175): True, (175, 325): True, (325, 175): True, (325, 325): True, 
-             (190, 175): True, (190, 325): True, (310, 175): True, (310, 325): True, (205, 175): True, (205, 325): True, (295, 175): True, 
-             (295, 325): True, (220, 175): True, (220, 325): True, (280, 175): True, (280, 325): True, (25, 212): False, (25, 288): False, 
-             (475, 212): False, (475, 288): False, (40, 212): True, (40, 288): True, (460, 212): True, (460, 288): True, (55, 212): True, 
-             (55, 288): True, (445, 212): True, (445, 288): True, (70, 212): True, (70, 288): True, (430, 212): True, (430, 288): True, 
-             (85, 212): True, (85, 288): True, (415, 212): True, (415, 288): True, (100, 212): True, (100, 288): True, (400, 212): True, 
-             (400, 288): True, (115, 212): False, (115, 288): False, (385, 212): False, (385, 288): False, (155, 280): True, (345, 280): True, 
-             (155, 220): True, (345, 220): True, (155, 295): True, (345, 295): True, (155, 205): True, (345, 205): True, (155, 310): True, 
-             (345, 310): True, (155, 190): True, (345, 190): True, (167, 280): True, (167, 220): True, (182, 280): True, (182, 220): True, 
-             (197, 280): True, (197, 220): True, (212, 280): True, (212, 220): True, (227, 280): True, (227, 220): True, (242, 280): True, 
-             (242, 220): True, (257, 280): True, (257, 220): True, (272, 280): True, (272, 220): True, (287, 280): True, (287, 220): True, 
-             (302, 280): True, (302, 220): True, (317, 280): True, (317, 220): True, (332, 280): True, (332, 220): True, (242, 235): True, 
-             (242, 250): True, (242, 265): True, (257, 235): True, (257, 250): True, (257, 265): True, (235, 325): False, (250, 325): False, 
-             (265, 325): False, (155, 325): False, (345, 325): False, (155, 175): False, (345, 175): False}
-totalPointDots = len(dict(filter(lambda x: (x[1] == True), pointDots.items())))
-powerUpPoints = [(25, 115), (25, 385), (475, 115), (475, 385)]
-blink_counter = 0
 
-pause=False
-pac_pos = [250,325]
-pac_size = 10
-pac_direction = 'right'
-pac_direction_command = 'right'
-pac_speed = 1
-pac_valid_moves = {'right' : False, 'left' : False, 'up' : False, 'down' : False}
-power_up = False
-power_up_time = 0
-game_won = False
-game_over = False
-score = 0
-game=True
 
 def drawMaze():
     global walls
@@ -603,15 +639,15 @@ def draw_ghost_eyes(ghostX, ghostY, ghostRad, dir):
 
 
 def draw_ghost_mouth(ghostX, ghostY):
-    global GhostMouthRad, setGhostMouth
-    global ghostEyeUp
+    global GhostMouthRad, setGhostMouth, pause
+    # global ghostEyeUp
 
     cl1, cl2, cl3 = color["white"]
     glColor3f(cl1, cl2, cl3)
     mouthX = ghostX
     mouthY = ghostY - 4
     curTime = time.time()
-    if curTime - setGhostMouth >= 0.3:
+    if curTime - setGhostMouth >= 0.3 and not pause:
         setGhostMouth = curTime
         if GhostMouthRad == 2:
             GhostMouthRad = 1
@@ -733,15 +769,16 @@ def change_dir():
 
 def update_ghost():
     change_dir()
+    ghostSpeed = 1
     for ghost in ghostInfo:
         if ghost["dir"] == "right":
-            ghost["ghostX"] += 1
+            ghost["ghostX"] += ghostSpeed
         if ghost["dir"] == "left":
-            ghost["ghostX"] -= 1
+            ghost["ghostX"] -= ghostSpeed
         if ghost["dir"] == "up":
-            ghost["ghostY"] += 1
+            ghost["ghostY"] += ghostSpeed
         if ghost["dir"] == "down":
-            ghost["ghostY"] -= 1
+            ghost["ghostY"] -= ghostSpeed
 
 
 def view_if_powerup(): # temporary function
@@ -813,27 +850,33 @@ def draw_hearts():
         cx += between_gap
 
 
+
+def game_restart():
+    ghost_initial()
+
+
 def animate():
     global blink_counter, power_up, power_up_time, pac_pos, pac_size, pause, game_won, game_over, special
-    if score == 0 and pac_pos[0] == 250:
-        time.sleep(0.5) 
-    if pause or game_won or game_over:
-        return
-    blink_counter = blink_counter + 1 if blink_counter < 10 else 0
-    if power_up:
-        power_up_time -= 1
-        if power_up_time <= 0:
-            power_up = False
-            pac_size = 10
-            powerUp_mode(False)  # To end powerUp mode ghost
+    if not pause:
+        if score == 0 and pac_pos[0] == 250:
+            time.sleep(0.5) 
+        if pause or game_won or game_over:
+            return
+        blink_counter = blink_counter + 1 if blink_counter < 10 else 0
+        if power_up:
+            power_up_time -= 1
+            if power_up_time <= 0:
+                power_up = False
+                pac_size = 10
+                powerUp_mode(False)  # To end powerUp mode ghost
 
-    check_valid_moves()
-    set_direction()
-    move_pacman()
-    collision_with_point_dots()
-    collision_with_ghost()
-    update_ghost()
-    
+        check_valid_moves()
+        set_direction()
+        move_pacman()
+        collision_with_point_dots()
+        collision_with_ghost()
+        update_ghost()
+        
     
     glutPostRedisplay()
 
@@ -878,22 +921,23 @@ def mouseListener(button, state, x, y):
     global walls, game, pause
 
     if button== GLUT_LEFT_BUTTON:
-        print(x, y)
+        print(x, y) ## temp
         if (state == GLUT_DOWN):
             x1,y1=coordinate_converter(x,y)
             
             #pause
             if 244<=x1<=256 and 465<=y1<=500:
                 if pause==False:
-                    pause=speed
-                    speed=0
+                    pause=True
+                    # speed=0
                 else:
-                    speed=pause
+                    # speed=pause
                     pause=False
 
             #restart
             elif 20<=x1<=45 and 465<=y1<=500:
-                pass
+                game_restart()
+                pacman_initial()
                 print("Game restarted")
             
             #exit
@@ -909,28 +953,11 @@ def showScreen():
     iterate()
     
     global pause, walls, game, pac_pos, game_won, game_over
-
-    #cross
-    glColor3f(1.0, .0, 0.0) 
-    draw_line(460,495,490,465)
-    draw_line(460,465,490,495)
-
-    #play/pause
-    if pause!=False:
-        glColor3f(1.0, 0.9, 0.2)
-        draw_line(246,495,246,465)
-        draw_line(266,480,246,465)
-        draw_line(246,495,266,480)
-    else:
-        glColor3f(1.0, 0.9, 0.2)
-        draw_line(246,495,246,465)
-        draw_line(254,495,254,465)
-
-    #arrow
-    glColor3f(0.2, 0.6, 1)
-    draw_line(45,495,20,480)
-    draw_line(20,480,45,465)
-    draw_line(20,480,55,480)
+    ## buttons
+    draw_cross()
+    draw_pause_or_play(pause)
+    draw_replay()
+    
 
     if game_won:
         draw_end_screen("You won")

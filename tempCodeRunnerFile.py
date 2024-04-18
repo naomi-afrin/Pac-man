@@ -1,2 +1,1 @@
-
-# special = True # temp
+  # draw_line(246,495,246,465)
