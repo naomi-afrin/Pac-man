@@ -307,24 +307,25 @@ def draw_circle(x,y,r):
 
 
 def draw_cross():
+    pointSize = 4
     glColor3f(1.0, .0, 0.0) 
-    draw_line(460,495,490,465)
-    draw_line(460,465,490,495)
+    draw_line(460,495,490,465, pointSize)
+    draw_line(460,465,490,495, pointSize)
 
 
 def draw_play():
-    pointSize = 3
-    glColor3f(1.0, 0.9, 0.2)
+    glColor3f(0, 1, 0)
+    pointSize = 4
     draw_line(246,495,246,465, pointSize)
     draw_line(266,480,246,465, pointSize)
     draw_line(246,495,266,480, pointSize)
 
 
 def draw_pause():
-    glColor3f(1.0, 0.9, 0.2)
+    glColor3f(1, 1, 0)
     pointSize = 3
-    draw_line(246,495,246,465, pointSize)
-    draw_line(254,495,254,465, pointSize)
+    draw_line(245,495,245,465, pointSize)
+    draw_line(255,495,255,465, pointSize)
     
 
 def draw_pause_or_play(pause):
@@ -335,10 +336,11 @@ def draw_pause_or_play(pause):
         
 
 def draw_replay():
-    glColor3f(0.2, 0.6, 1)
-    draw_line(45,495,20,480)
-    draw_line(20,480,45,465)
-    draw_line(20,480,55,480)
+    pointSize = 4
+    glColor3f(0, 1, 1)
+    draw_line(45,495,20,480, pointSize)
+    draw_line(20,480,45,465, pointSize)
+    draw_line(20,480,55,480, pointSize)
 
 
 def draw_pac_circle(x,y,r):
@@ -975,9 +977,11 @@ def showScreen():
 
 
 def iterate():
-    glViewport(0, 0, 500, 500)
+    # glViewport(0, 0, 500, 500)
+    glViewport(50, 50, 500, 500)
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
+    # glOrtho(0.0, 500, 0.0, 500, 0.0, 1.0)
     glOrtho(0.0, 500, 0.0, 500, 0.0, 1.0)
     glMatrixMode (GL_MODELVIEW)
     glLoadIdentity()
@@ -985,8 +989,11 @@ def iterate():
 
 glutInit() 
 glutInitDisplayMode(GLUT_RGBA) 
-glutInitWindowSize(500, 500) 
-glutInitWindowPosition(0, 0) 
+## old val
+# glutInitWindowSize(500, 500) 
+# glutInitWindowPosition(0, 0) 
+glutInitWindowSize(600, 600) 
+glutInitWindowPosition(450, 50) 
 wind = glutCreateWindow(b"PACMAN") 
 ghost_initial()
 pacman_initial()
