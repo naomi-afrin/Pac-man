@@ -307,24 +307,25 @@ def draw_circle(x,y,r):
 
 
 def draw_cross():
+    pointSize = 4
     glColor3f(1.0, .0, 0.0) 
-    draw_line(460,495,490,465)
-    draw_line(460,465,490,495)
+    draw_line(460,495,490,465, pointSize)
+    draw_line(460,465,490,495, pointSize)
 
 
 def draw_play():
-    pointSize = 3
-    glColor3f(1.0, 0.9, 0.2)
+    glColor3f(0, 1, 0)
+    pointSize = 4
     draw_line(246,495,246,465, pointSize)
     draw_line(266,480,246,465, pointSize)
     draw_line(246,495,266,480, pointSize)
 
 
 def draw_pause():
-    glColor3f(1.0, 0.9, 0.2)
+    glColor3f(1, 1, 0)
     pointSize = 3
-    draw_line(246,495,246,465, pointSize)
-    draw_line(254,495,254,465, pointSize)
+    draw_line(245,495,245,465, pointSize)
+    draw_line(255,495,255,465, pointSize)
     
 
 def draw_pause_or_play(pause):
@@ -335,10 +336,11 @@ def draw_pause_or_play(pause):
         
 
 def draw_replay():
-    glColor3f(0.2, 0.6, 1)
-    draw_line(45,495,20,480)
-    draw_line(20,480,45,465)
-    draw_line(20,480,55,480)
+    pointSize = 4
+    glColor3f(0, 1, 1)
+    draw_line(45,495,20,480, pointSize)
+    draw_line(20,480,45,465, pointSize)
+    draw_line(20,480,55,480, pointSize)
 
 
 def draw_pac_circle(x,y,r):
@@ -855,6 +857,11 @@ def game_restart():
     ghost_initial()
 
 
+# def fill_maze_color():
+#     glColor3f(0,0,0)
+#     draw_line(0, 250, 500, 250, 320)
+
+
 def animate():
     global blink_counter, power_up, power_up_time, pac_pos, pac_size, pause, game_won, game_over, special
     if not pause:
@@ -952,6 +959,7 @@ def showScreen():
     glLoadIdentity()
     iterate()
     
+    # fill_maze_color()
     global pause, walls, game, pac_pos, game_won, game_over
     ## buttons
     draw_cross()
@@ -986,7 +994,7 @@ def iterate():
 glutInit() 
 glutInitDisplayMode(GLUT_RGBA) 
 glutInitWindowSize(500, 500) 
-glutInitWindowPosition(0, 0) 
+glutInitWindowPosition(500, 100) 
 wind = glutCreateWindow(b"PACMAN") 
 ghost_initial()
 pacman_initial()
