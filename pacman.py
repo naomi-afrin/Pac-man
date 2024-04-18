@@ -857,6 +857,11 @@ def game_restart():
     ghost_initial()
 
 
+# def fill_maze_color():
+#     glColor3f(0,0,0)
+#     draw_line(0, 250, 500, 250, 320)
+
+
 def animate():
     global blink_counter, power_up, power_up_time, pac_pos, pac_size, pause, game_won, game_over, special
     if not pause:
@@ -954,6 +959,7 @@ def showScreen():
     glLoadIdentity()
     iterate()
     
+    # fill_maze_color()
     global pause, walls, game, pac_pos, game_won, game_over
     ## buttons
     draw_cross()
@@ -977,11 +983,9 @@ def showScreen():
 
 
 def iterate():
-    # glViewport(0, 0, 500, 500)
-    glViewport(50, 50, 500, 500)
+    glViewport(0, 0, 500, 500)
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    # glOrtho(0.0, 500, 0.0, 500, 0.0, 1.0)
     glOrtho(0.0, 500, 0.0, 500, 0.0, 1.0)
     glMatrixMode (GL_MODELVIEW)
     glLoadIdentity()
@@ -989,11 +993,8 @@ def iterate():
 
 glutInit() 
 glutInitDisplayMode(GLUT_RGBA) 
-## old val
-# glutInitWindowSize(500, 500) 
-# glutInitWindowPosition(0, 0) 
-glutInitWindowSize(600, 600) 
-glutInitWindowPosition(450, 50) 
+glutInitWindowSize(500, 500) 
+glutInitWindowPosition(500, 100) 
 wind = glutCreateWindow(b"PACMAN") 
 ghost_initial()
 pacman_initial()

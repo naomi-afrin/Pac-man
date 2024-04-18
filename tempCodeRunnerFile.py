@@ -1,1 +1,2 @@
-  # draw_line(246,495,246,465)
+glutInitWindowSize(600, 600) 
+glutInitWindowPosition(450, 50) 
