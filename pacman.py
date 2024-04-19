@@ -385,7 +385,7 @@ def draw_cross():
 
 
 def draw_play():
-    glColor3f(0, 1, 0)
+    glColor3f(1, 1, 0)
     pointSize = 4
     draw_line(246, 495, 246, 465, pointSize)
     draw_line(266, 480, 246, 465, pointSize)
@@ -585,12 +585,12 @@ def draw_score():
 
 
 def draw_pacman(l):
-    global pac_size, eat, pacman_mouth_time, pacman_mouth_close
+    global pac_size, eat, pacman_mouth_time, pacman_mouth_close, pause
     x, y = l
     glColor3f(1, 1, 0)
     curTime = time.time()
 
-    if curTime - pacman_mouth_time >= 0.2:
+    if curTime - pacman_mouth_time >= 0.2 and pause == False:
         pacman_mouth_time = curTime
         if pacman_mouth_close == False:
             pacman_mouth_close = True
