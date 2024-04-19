@@ -41,7 +41,7 @@ def ghost_initial():
 
 
 def pacman_initial():
-    global lifeCount, pointDots, totalPointDots, powerUpPoints, blink_counter, pause, pac_pos, pac_size, pac_direction, pac_direction_command, pac_speed, pac_valid_moves, power_up, power_up_time, game_won, game_over, score, game, lifeCount, eat, cherry_start, cherries, cherry
+    global lifeCount, pointDots, totalPointDots, powerUpPoints, blink_counter, pause, pac_pos, pac_size, pac_direction, pac_direction_command, pac_speed, pac_valid_moves, power_up, power_up_time, game_won, game_over, score, game, lifeCount, eat, cherry_start, cherries, cherry, pacman_mouth_time, pacman_mouth_close
     lifeCount = 3
     pointDots = {(25, 115): True, (115, 115): True, (475, 115): True, (385, 115): True, (25, 130): True,
                  (115, 130): True, (475, 130): True,
@@ -145,6 +145,8 @@ def pacman_initial():
     eat = False
     cherry_start = time.time()
     cherry = False
+    pacman_mouth_time = time.time()
+    pacman_mouth_close = False
 
 
 def to_zone0(x1, y1, x2, y2, z):
@@ -583,15 +585,31 @@ def draw_score():
 
 
 def draw_pacman(l):
-    global pac_size, eat
+    global pac_size, eat, pacman_mouth_time, pacman_mouth_close
     x, y = l
     glColor3f(1, 1, 0)
-    if eat == False:
+    curTime = time.time()
+
+    if curTime - pacman_mouth_time >= 0.2:
+        pacman_mouth_time = curTime
+        if pacman_mouth_close == False:
+            pacman_mouth_close = True
+        else:
+            pacman_mouth_close = False
+
+    
+    if pacman_mouth_close == False:
         for i in range(pac_size):
             draw_pac_circle(x, y, i + 1)
     else:
         draw_pac_eating(l)
-        eat = False
+
+    # if eat == False:
+    #     for i in range(pac_size):
+    #         draw_pac_circle(x, y, i + 1)
+    # else:
+    #     draw_pac_eating(l)
+    #     eat = False
     draw_pac_eyes()
 
 

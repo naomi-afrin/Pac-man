@@ -1,2 +1,5 @@
-glutInitWindowSize(600, 600) 
-glutInitWindowPosition(450, 50) 
+from OpenGL.GL import *
+from OpenGL.GLUT import *
+from OpenGL.GLU import *
+import random
+import time
