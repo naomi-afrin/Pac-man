@@ -414,7 +414,7 @@ def draw_replay():
 
 def initiate_cherry():
     global cherry, cherries, cherry_start
-    if cherry == False and (time.time() - cherry_start) >= 7 and pause == False:
+    if cherry == False and (time.time() - cherry_start) >= 15 and pause == False:
         cherry = random.choice(cherries)
         cherry_start = time.time()
 
@@ -455,6 +455,7 @@ def eat_cherry():
     if c_x - 10 <= p_x <= c_x + 10 and c_y - 10 <= p_y <= c_y + 10:
         score += 30
         cherry = False
+
 
 
 def draw_pac_circle(x, y, r):
@@ -779,7 +780,6 @@ def draw_ghost_eyes(ghostX, ghostY, ghostRad, dir):
 
 def draw_ghost_mouth(ghostX, ghostY):
     global GhostMouthRad, setGhostMouth, pause
-    # global ghostEyeUp
 
     cl1, cl2, cl3 = color["white"]
     glColor3f(cl1, cl2, cl3)
@@ -824,7 +824,6 @@ def powerUp_mode(start):
         powerUp_mode_start = time.time()
     else:
         powerUpMode = False
-    glColor3f(1, 1, 1)
     powerUp_mode_color = "white"
 
 
@@ -989,12 +988,11 @@ def draw_hearts():
 
 
 def game_restart():
+    print("Game restarted")
+    pacman_initial()            
     ghost_initial()
 
 
-# def fill_maze_color():
-#     glColor3f(0,0,0)
-#     draw_line(0, 250, 500, 250, 320)
 
 
 def animate():
@@ -1062,7 +1060,6 @@ def mouseListener(button, state, x, y):
     global walls, game, pause
 
     if button == GLUT_LEFT_BUTTON:
-        print(x, y)  ## temp
         if (state == GLUT_DOWN):
             x1, y1 = coordinate_converter(x, y)
 
@@ -1078,8 +1075,7 @@ def mouseListener(button, state, x, y):
             # restart
             elif 20 <= x1 <= 45 and 465 <= y1 <= 500:
                 game_restart()
-                pacman_initial()
-                print("Game restarted")
+                
 
             # exit
             elif 460 <= x1 <= 490 and 465 <= y1 <= 500:
@@ -1093,7 +1089,6 @@ def showScreen():
     glLoadIdentity()
     iterate()
 
-    # fill_maze_color()
     global pause, walls, game, pac_pos, game_won, game_over, eat, eat_time
     ## buttons
     draw_cross()
