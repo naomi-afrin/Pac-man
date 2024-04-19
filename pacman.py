@@ -920,14 +920,7 @@ def update_ghost():
             ghost["ghostY"] -= ghostSpeed
 
 
-def view_if_powerup():  # temporary function
-    global power_up
-    if power_up:
-        glColor3f(1, 0, 0)
-        glPointSize(30)
-        glBegin(GL_POINTS)
-        glVertex2f(250, 50)
-        glEnd()
+
 
 
 def add_shine_to_hearts(cx, cy):
@@ -1105,7 +1098,6 @@ def showScreen():
         draw_pacman(pac_pos)
         choose_ghost()
         draw_hearts()
-        view_if_powerup()  # temporary function to check power up lasting time
         initiate_cherry()
     draw_score()
     glutSwapBuffers()
